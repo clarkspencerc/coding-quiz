@@ -1,8 +1,9 @@
 var welcomeEl = document.querySelector("#welcome"); 
 var quizEl = document.querySelector("#quiz"); 
 var timerEl = document.querySelector("#timer"); 
-var questions = []
-
+var questions = [];
+var score = 0;
+var currentQ = 0; 
 // question bank 
 
 questions = [
@@ -14,7 +15,7 @@ questions = [
             c:"margin",
             d:"Both width and height"
         },
-        correctAnswer:'d'
+        correctAnswer:'Both width and height'
     },
     {
         q: "If you need to position a child element in relation to its parent element, which value shoulud you set the position property to?",
@@ -24,7 +25,7 @@ questions = [
             c:"absolute",
             d:"static"
         },
-        correctAnswer:'b'
+        correctAnswer:'relative'
     },
     {
         q: "What is an example of a pseudo-element",
@@ -34,7 +35,7 @@ questions = [
             c:"::first-letter",
             d:"All of the above"
         },
-        correctAnswer:'d'
+        correctAnswer:'All of the above'
     },
 ]
 
@@ -53,7 +54,7 @@ buttonEl.textContent = "Start Quiz";
 buttonEl.setAttribute("id", "start-quiz");
 welcomeEl.appendChild(buttonEl); 
 hide('start-quiz','welcome');
-displayQuestion(); 
+
 };
 
 
@@ -61,6 +62,8 @@ displayQuestion();
 var hide = function(buttonId, divId){
     document.getElementById(buttonId).onclick = function(){
         document.getElementById(divId).hidden = true
+        startTimer(); 
+        displayQuestion(); 
     }
 };
 
@@ -78,27 +81,45 @@ var setStartEl = setInterval(function(){
 }, 1000);
 };
 
-//display question 
-
 var displayQuestion = function(){
    var question = document.createElement("h2"); 
-   question.textContent = questions[1].q; 
+   question.textContent = questions[currentQ].q; 
+   question.setAttribute("calss",".question");
    quizEl.appendChild(question); 
   
 
-   for(letter in questions[1].ans){
+   for(letter in questions[currentQ].ans){
     var answer = document.createElement("button");
-    answer.textContent= questions[1].ans[letter];
-    // need to set a class that way I can tell which one is correct 
-    //answer.setAttribute("class", ans[letter]); 
-    console.log(questions[1].ans[letter]); 
-    console.log()
+    answer.textContent= questions[currentQ].ans[letter]; 
+    answer.setAttribute("calss", ".choices");
     quizEl.appendChild(answer);}
 
 
 };
 
-// ask question function loops through question bank until it's displayed all of them 
+quizEl.addEventListener("click", function(event){
+    var selectedAnswer = event.target.textContent; 
+    var correctOption = questions[currentQ].correctAnswer;
+    
+    if( selectedAnswer != correctOption){
+        timeLeft -= 10; 
+        score -= 3; 
+         
+    }
+    else {
+        score += 10; 
+        
+    }
+   console.log(score); 
+   if (currentQ < questions.length -1){
+       currentQ++;
+       displayQuestion(); 
+   }
+   
+   
+});
+
+
 
 // game-over function -> when timer runs out or all questions have been asked 
 
