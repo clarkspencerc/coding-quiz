@@ -57,6 +57,15 @@ hide('start-quiz','welcome');
 
 };
 
+var endGame = function(){
+    empty(quizEl);
+    timeLeft = 0 ; 
+    console.log("game has ended. this is your final score " + score);
+};
+
+var empty = function(element) {
+    element.replaceChildren(); 
+};
 
 // hide function 
 var hide = function(buttonId, divId){
@@ -72,6 +81,7 @@ var hide = function(buttonId, divId){
 var startTimer = function(){
 var setStartEl = setInterval(function(){
     if (timeLeft <0){
+        endGame(); 
         clearInterval(setStartEl); 
     }
     else{
@@ -97,6 +107,8 @@ var displayQuestion = function(){
 
 };
 
+
+
 quizEl.addEventListener("click", function(event){
     var selectedAnswer = event.target.textContent; 
     var correctOption = questions[currentQ].correctAnswer;
@@ -111,14 +123,17 @@ quizEl.addEventListener("click", function(event){
         
     }
    console.log(score); 
-   if (currentQ < questions.length -1){
+   if (currentQ < questions.length -1 && timeLeft > 0){
        currentQ++;
+       empty(quizEl); 
        displayQuestion(); 
+   }
+   else if ( currentQ = questions.length){
+       endGame(); 
    }
    
    
 });
-
 
 
 // game-over function -> when timer runs out or all questions have been asked 
