@@ -1,9 +1,11 @@
 var welcomeEl = document.querySelector("#welcome"); 
 var quizEl = document.querySelector("#quiz"); 
 var timerEl = document.querySelector("#timer"); 
+var highScoreEl = document.querySelector("#highScore");
 var questions = [];
 var score = 0;
 var currentQ = 0; 
+var highScoreArr = [{initials: "", scor: 0}]; 
 // question bank 
 
 questions = [
@@ -59,7 +61,55 @@ hide('start-quiz','welcome');
 
 var endGame = function(){
     empty(quizEl);
-    timeLeft = 0 ; 
+    timeLeft = 0 ;
+    var alertEl = document.createElement("h3"); 
+    alertEl.textContent = "The game has ended. This is your final score " + score;
+    highScoreEl.appendChild(alertEl); 
+
+    // load high score values 
+
+    if (score >= highScoreArr[0].scor){
+
+        var newHighScoreEl = document.createElement("h4"); 
+        newHighScoreEl.textContent = "You have set a new High Score. Please Enter your Initials below."; 
+        highScoreEl.appendChild(newHighScoreEl); 
+
+        var initials = document.createElement("INPUT");
+        initials.setAttribute("type", "text");
+        initials.setAttribute("value", "Enter Your Initials");
+        initials.setAttribute("maxlength", "3");
+        highScoreEl.appendChild(initials);
+
+        var submitEl = document.createElement("button");
+        submitEl.textContent = "Submit"; 
+        submitEl.setAttribute  = ("class", "btn");
+        submitEl.setAttribute = ("id", "submitHighScore");
+        highScoreEl.appendChild(submitEl); 
+
+        submitEl.addEventListener("click", function(event){
+            event.preventDefault(); 
+            var submitedInitials = initials.value; 
+            console.log(submitedInitials);
+
+            highScoreArr.unshift({initials:submitedInitials, scor: score}); 
+            console.log(score); 
+            console.log(highScoreArr); 
+            // save high score 
+            saveScore(highScoreArr); 
+            highScoreEl.setAttribute("class","hide");  
+            displayScores(); 
+        })
+
+        
+       
+        console.log(highScoreArr);
+    }
+    else {
+        var tryAgainEl = document.createElement("h4"); 
+        tryAgainEl.textContent = "You did not set a new highscore, please try again"; 
+        // display leader board??? 
+    }
+
     console.log("game has ended. this is your final score " + score);
 };
 
@@ -81,8 +131,12 @@ var hide = function(buttonId, divId){
 var startTimer = function(){
 var setStartEl = setInterval(function(){
     if (timeLeft <0){
-        endGame(); 
+        
         clearInterval(setStartEl); 
+        
+        if (currentQ != questions.length){
+            endGame();
+        } 
     }
     else{
         document.getElementById("timer").innerHTML = "Seconds Remaining: " + timeLeft;
@@ -122,9 +176,10 @@ quizEl.addEventListener("click", function(event){
         score += 10; 
         
     }
+    currentQ++;
    console.log(score); 
-   if (currentQ < questions.length -1 && timeLeft > 0){
-       currentQ++;
+   if (currentQ < questions.length && timeLeft > 0){
+       
        empty(quizEl); 
        displayQuestion(); 
    }
@@ -136,17 +191,63 @@ quizEl.addEventListener("click", function(event){
 });
 
 
-// game-over function -> when timer runs out or all questions have been asked 
-
-// wrong answer function -> subtracts time from timer
-
-// create score 
-
-// input initials with score 
-
 // save score in local date 
+
+var saveScore = function(savedArr) {
+    localStorage.setItem("highScores", JSON.stringify(savedArr)); 
+}; 
 
 // retrive score from local data 
 
-startGame(); 
+var loadScores = function(){
 
+    var savedScoreArr = localStorage.getItem("highScores");
+    savedScoreArr = JSON.parse(savedScoreArr);
+
+    highScoreArr = savedScoreArr;
+    
+    return highScoreArr; 
+}
+
+var displayScores = function(){
+    loadScores(); 
+//    var savedScoreArr = localStorage.getItem("highScores");
+//      savedScoreArr= JSON.parse(savedScoreArr); 
+
+//     highScoreArr = savedScoreArr; 
+//     console.log(highScoreArr); 
+
+    var scoreDiv= document.getElementById("viewHighScores"); 
+    var scoreBoard = document.createElement("div"); 
+    scoreBoard.classList.add("scores"); 
+    scoreDiv.appendChild(scoreBoard); 
+
+    var scoreBoardHeader = document.createElement("h2");
+    scoreBoardHeader.innerText = "High Scores"; 
+    scoreBoardHeader.classList.add("title"); 
+    scoreBoard.appendChild(scoreBoardHeader); 
+
+    for(i = 0; i < highScoreArr.length -1 ; i++){
+
+        // div for card 
+        var cardsEl = document.createElement("div"); 
+        
+        // element for name 
+        var nameEl = document.createElement("h3"); 
+        nameEl.innerText = highScoreArr[i].initials;
+        cardsEl.appendChild(nameEl); 
+
+
+        // element for score 
+        var viewHighScoreEl = document.createElement("h4"); 
+        viewHighScoreEl.innerText = highScoreArr[i].scor; 
+        cardsEl.appendChild(viewHighScoreEl); 
+
+        scoreBoard.appendChild(cardsEl); 
+    }
+    
+
+};
+
+startGame(); 
+loadScores(); 
