@@ -1,11 +1,70 @@
 .title {
-
+    color: cadetblue;
 }
 
-.score {
-
+.score, .question{
+    color: blue;
 }
 
 .hide{
     display:none; 
+}
+
+.btn{
+    background-color: blue;
+    color: white;
+    border-radius: 12px;
+}
+
+.centered{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.choices{
+    border: 2px solid black;
+    color: black;
+    padding: 15px 32px;
+    border-radius: 12px; 
+    margin: 15px;
+    flex-basis: 40%;
+}
+
+.choices:hover{
+    background-color: blue;
+    color: beige;
+}
+
+.page-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome{
+    display: flex;
+    justify-content: center;
+}
+
+header{
+    display: flex;
+    justify-content: space-between;
+}
+#start-quiz-btn{
+    display: flex;
+    justify-content: center;
+}
+#start-quiz{
+ font-size: 22px;
+ box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+  
+}
+
+.highscores{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

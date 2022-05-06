@@ -2,6 +2,8 @@ var welcomeEl = document.querySelector("#welcome");
 var quizEl = document.querySelector("#quiz"); 
 var timerEl = document.querySelector("#timer"); 
 var highScoreEl = document.querySelector("#highScore");
+var viewHighScoreButtonEl = document.querySelector("#viewHighScoresButton");
+var buttonEl = document.createElement("button");
 var questions = [];
 var score = 0;
 var currentQ = 0; 
@@ -47,15 +49,26 @@ var timeLeft = questions.length * 10 + 10 ;
 
 // start game 
 var startGame = function(){
-var h1El = document.createElement("h1"); 
-h1El.textContent = "Welcome to The Coding Quiz";
-welcomeEl.appendChild(h1El); 
 
-var buttonEl = document.createElement("button"); 
-buttonEl.textContent = "Start Quiz"; 
-buttonEl.setAttribute("id", "start-quiz");
-welcomeEl.appendChild(buttonEl); 
-hide('start-quiz','welcome');
+    if (localStorage.getItem("highScores") == false){
+        saveScores(highScoreArr); 
+    }
+
+     
+    var h1El = document.createElement("h1"); 
+    h1El.textContent = "Welcome to The Coding Quiz";
+    h1El.setAttribute("class", "title"); 
+    welcomeEl.appendChild(h1El); 
+
+    var startDivEl = document.createElement("div")
+    startDivEl.setAttribute("id", "start-quiz-btn"); 
+    buttonEl.textContent = "Start Quiz"; 
+    buttonEl.setAttribute("id", "start-quiz");
+    buttonEl.setAttribute("class","btn"); 
+    startDivEl.appendChild(buttonEl); 
+
+    welcomeEl.appendChild(startDivEl);
+    hide('start-quiz','welcome');
 
 };
 
@@ -74,17 +87,22 @@ var endGame = function(){
         newHighScoreEl.textContent = "You have set a new High Score. Please Enter your Initials below."; 
         highScoreEl.appendChild(newHighScoreEl); 
 
+        var initialsDivEl = document.createElement("div"); 
+        initialsDivEl.setAttribute("class", "centered");
+
         var initials = document.createElement("INPUT");
         initials.setAttribute("type", "text");
         initials.setAttribute("value", "Enter Your Initials");
         initials.setAttribute("maxlength", "3");
-        highScoreEl.appendChild(initials);
+        initialsDivEl.appendChild(initials);
 
         var submitEl = document.createElement("button");
+        submitEl.setAttribute("class","btn");
         submitEl.textContent = "Submit"; 
-        submitEl.setAttribute  = ("class", "btn");
         submitEl.setAttribute = ("id", "submitHighScore");
-        highScoreEl.appendChild(submitEl); 
+        initialsDivEl.appendChild(submitEl); 
+
+        highScoreEl.appendChild(initialsDivEl)
 
         submitEl.addEventListener("click", function(event){
             event.preventDefault(); 
@@ -95,7 +113,7 @@ var endGame = function(){
             console.log(score); 
             console.log(highScoreArr); 
             // save high score 
-            saveScore(highScoreArr); 
+            saveScores(highScoreArr); 
             highScoreEl.setAttribute("class","hide");  
             displayScores(); 
         })
@@ -148,16 +166,19 @@ var setStartEl = setInterval(function(){
 var displayQuestion = function(){
    var question = document.createElement("h2"); 
    question.textContent = questions[currentQ].q; 
-   question.setAttribute("calss",".question");
+   question.setAttribute("class","question");
    quizEl.appendChild(question); 
   
+    var answersDivEl = document.createElement("div"); 
+    answersDivEl.setAttribute("class", "centered"); 
 
    for(letter in questions[currentQ].ans){
     var answer = document.createElement("button");
     answer.textContent= questions[currentQ].ans[letter]; 
-    answer.setAttribute("calss", ".choices");
-    quizEl.appendChild(answer);}
-
+    answer.setAttribute("class", "choices");
+    answersDivEl.appendChild(answer);
+    }
+    quizEl.appendChild(answersDivEl); 
 
 };
 
@@ -193,7 +214,7 @@ quizEl.addEventListener("click", function(event){
 
 // save score in local date 
 
-var saveScore = function(savedArr) {
+var saveScores = function(savedArr) {
     localStorage.setItem("highScores", JSON.stringify(savedArr)); 
 }; 
 
@@ -211,11 +232,6 @@ var loadScores = function(){
 
 var displayScores = function(){
     loadScores(); 
-//    var savedScoreArr = localStorage.getItem("highScores");
-//      savedScoreArr= JSON.parse(savedScoreArr); 
-
-//     highScoreArr = savedScoreArr; 
-//     console.log(highScoreArr); 
 
     var scoreDiv= document.getElementById("viewHighScores"); 
     var scoreBoard = document.createElement("div"); 
@@ -231,6 +247,7 @@ var displayScores = function(){
 
         // div for card 
         var cardsEl = document.createElement("div"); 
+        cardsEl.setAttribute("class","highscores"); 
         
         // element for name 
         var nameEl = document.createElement("h3"); 
@@ -249,5 +266,15 @@ var displayScores = function(){
 
 };
 
+
+
 startGame(); 
 loadScores(); 
+
+viewHighScoreButtonEl.addEventListener("click", function(event){
+        console.log("you just clicke the button"); 
+    timeLeft = 0 ; 
+    displayScores(); 
+    buttonEl.setAttribute("class", "hide");
+    welcomeEl.setAttribute("class", "hide");
+});
