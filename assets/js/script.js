@@ -50,7 +50,7 @@ var timeLeft = questions.length * 10 + 10 ;
 // start game 
 var startGame = function(){
 
-    if (localStorage.getItem("highScores") == false){
+    if (localStorage.getItem("highScores") == null){
         saveScores(highScoreArr); 
     }
 
